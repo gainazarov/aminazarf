@@ -1,0 +1,122 @@
+You are a senior frontend developer and high-end UI/UX designer.
+
+Create a premium one-page landing website for a homeware & tableware store called "Amina Zarf".
+
+⚠️ IMPORTANT:
+- Frontend only (NO backend).
+- One-page website with dynamic category switching.
+- The design MUST closely follow the attached reference style.
+- The website must feel like a luxury editorial catalog, not a typical online shop.
+
+────────────────────────
+DESIGN STYLE (CRITICAL)
+────────────────────────
+The design is inspired by premium European home & lifestyle brands.
+
+Visual characteristics:
+- Large full-width lifestyle photography
+- Warm natural lighting (sunlight, soft shadows)
+- Editorial magazine-like layout
+- Calm, emotional, slow design
+- No sharp contrasts or aggressive colors
+
+Color palette:
+- Warm beige
+- Milk white
+- Light sand
+- Soft brown
+- Subtle gold accents (very minimal)
+
+Typography:
+- Headings: elegant serif font (high fashion / editorial style)
+- Body text: clean modern sans-serif
+- Large headings with generous letter spacing
+- Minimal text, focus on visuals
+
+Spacing & layout:
+- Very large vertical spacing between sections
+- Wide margins, lots of white space
+- Content should “breathe”
+- Grid layouts inspired by photo galleries
+- Uneven image grids (editorial look)
+
+Images:
+- Lifestyle photos with people using tableware
+- Close-up shots of plates, glasses, ceramics
+- Soft focus, warm tones
+- Images are more important than text
+
+────────────────────────
+PAGE STRUCTURE
+────────────────────────
+
+1️⃣ HEADER
+- Minimal transparent header
+- Logo centered or left-aligned
+- Thin typography
+- On scroll: subtle background blur + opacity
+- No heavy borders
+
+2️⃣ HERO SECTION
+- Full-screen banner image
+- Soft overlay (dark beige / warm shadow)
+- Large centered heading
+- Calm fade-in animation
+- Button with minimal outline style
+
+3️⃣ CATEGORY SECTION (EDITORIAL GRID)
+- Category switcher styled as elegant text tabs
+- No boxes or hard borders
+- Active category is subtly highlighted
+- Switching categories replaces image grids smoothly
+- Product cards look like editorial photos, not shop cards
+- No visible prices (optional)
+
+Hover effects:
+- Slight image zoom
+- Soft shadow
+- Slow transition (ease-in-out)
+
+4️⃣ FEATURED COLLECTION
+- Large horizontal image block
+- Text overlay or side-aligned text
+- Editorial storytelling style
+
+5️⃣ GIFT CARD SECTION
+- Clean block with large visual
+- Minimal CTA
+- Soft background color
+
+6️⃣ ABOUT BRAND
+- Short poetic text
+- Narrow content width
+- Centered layout
+
+7️⃣ FOOTER
+- Very minimal
+- Light typography
+- Large spacing
+- Mandatory signature:
+
+“Designed with brain. Built with heart. — Gainazarov • Link to portfolio”
+
+────────────────────────
+ANIMATIONS
+────────────────────────
+- Slow fade-in on scroll
+- Smooth category transitions
+- Elegant hover animations
+- No fast or flashy effects
+
+────────────────────────
+TECH REQUIREMENTS
+────────────────────────
+- HTML, CSS, JS or React
+- Responsive
+- Clean structure
+- Production-ready
+
+────────────────────────
+OUTPUT
+────────────────────────
+Return only the complete frontend implementation.
