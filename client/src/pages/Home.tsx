@@ -18,8 +18,7 @@ export default function Home() {
   const isLoading = activeCategory ? loadingCat : loadingAll;
 
   // Static images for Hero and Featured sections
-  // Using Unsplash source URLs
-  const heroImage = "https://images.unsplash.com/photo-1615875605825-5eb9bb5c52bd?q=80&w=2000&auto=format&fit=crop"; 
+  const heroImage = "/images/hero.jpg";
   const featuredImage = "https://images.unsplash.com/photo-1615529182904-14819c35db37?q=80&w=2000&auto=format&fit=crop"; 
 
   return (
