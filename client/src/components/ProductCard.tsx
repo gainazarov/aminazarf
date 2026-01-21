@@ -49,9 +49,9 @@ export function ProductCard({ name, price, image, categoryName, index }: Product
       </motion.div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[95vw] md:max-w-[800px] p-0 overflow-hidden bg-background border-none rounded-none md:rounded-lg">
-          <div className="grid grid-cols-1 md:grid-cols-2 h-[80vh] md:h-auto overflow-y-auto">
-            <div className="relative aspect-[3/4] md:aspect-auto h-64 md:h-full">
+        <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-[800px] p-0 overflow-hidden bg-background border-none rounded-lg mx-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 max-h-[90vh] overflow-y-auto">
+            <div className="relative aspect-square md:aspect-auto h-64 sm:h-80 md:h-full">
               <img src={image} alt={name} className="w-full h-full object-cover" />
             </div>
             <div className="p-6 md:p-12 flex flex-col justify-center">

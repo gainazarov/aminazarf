@@ -9,6 +9,79 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
+const TeapotLoader = () => (
+  <div className="flex flex-col items-center justify-center space-y-4">
+    <div className="relative w-24 h-24">
+      <motion.svg
+        viewBox="0 0 100 100"
+        className="w-full h-full text-primary"
+        initial="initial"
+        animate="animate"
+      >
+        {/* Teapot body */}
+        <path
+          d="M30 40 Q30 30 50 30 Q70 30 70 40 L75 60 Q75 75 50 75 Q25 75 25 60 Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        {/* Spout */}
+        <path
+          d="M25 50 L15 45 Q10 42 12 38"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        {/* Handle */}
+        <path
+          d="M75 45 Q85 45 85 55 Q85 65 75 65"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        {/* Tea Flow */}
+        <motion.path
+          d="M12 38 Q5 60 50 90"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeDasharray="100"
+          variants={{
+            initial: { strokeDashoffset: 100, opacity: 0 },
+            animate: { 
+              strokeDashoffset: 0, 
+              opacity: [0, 1, 1, 0],
+              transition: { duration: 2, repeat: Infinity, ease: "easeInOut" } 
+            }
+          }}
+        />
+        {/* Piya (Cup) */}
+        <path
+          d="M40 85 L60 85 L65 95 Q50 100 35 95 Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        {/* Tea Circular Path back */}
+        <motion.path
+          d="M50 90 C 100 90, 100 30, 50 30"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeDasharray="150"
+          strokeDashoffset="150"
+          animate={{
+            strokeDashoffset: [150, 0],
+            opacity: [0, 0.5, 0.5, 0],
+            transition: { duration: 2, repeat: Infinity, ease: "linear", delay: 1 }
+          }}
+        />
+      </motion.svg>
+    </div>
+    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Загрузка...</span>
+  </div>
+);
+
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -64,7 +137,7 @@ export default function Home() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-white text-xs md:text-sm uppercase tracking-[0.3em] mb-6 font-medium"
           >
-            Посуда ручной работы
+            Магазин эксклюзивной посуды
           </motion.p>
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
@@ -97,34 +170,36 @@ export default function Home() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center items-center gap-8 mb-16">
-          <button
-            onClick={() => handleCategoryChange(null)}
-            className={`text-sm uppercase tracking-widest transition-all duration-300 pb-2 border-b border-transparent ${
-              activeCategory === null 
-                ? "text-primary border-primary" 
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Все
-          </button>
-          {categories?.map((cat) => (
+        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 mb-16">
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
             <button
-              key={cat.id}
-              onClick={() => handleCategoryChange(cat.slug)}
-              className={`text-sm uppercase tracking-widest transition-all duration-300 pb-2 border-b border-transparent ${
-                activeCategory === cat.slug 
+              onClick={() => handleCategoryChange(null)}
+              className={`text-sm uppercase tracking-widest transition-all duration-300 pb-1 border-b-2 ${
+                activeCategory === null 
                   ? "text-primary border-primary" 
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground border-transparent hover:text-foreground"
               }`}
             >
-              {cat.name}
+              Все
             </button>
-          ))}
+            {categories?.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryChange(cat.slug)}
+                className={`text-sm uppercase tracking-widest transition-all duration-300 pb-1 border-b-2 ${
+                  activeCategory === cat.slug 
+                    ? "text-primary border-primary" 
+                    : "text-muted-foreground border-transparent hover:text-foreground"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
           <Button 
             variant="ghost" 
             onClick={() => setIsCatalogOpen(true)}
-            className="text-sm uppercase tracking-widest ml-4 hover-elevate no-default-hover-elevate"
+            className="text-xs uppercase tracking-widest hover-elevate no-default-hover-elevate h-auto py-1 px-2"
           >
             Посмотреть все
           </Button>
@@ -139,7 +214,7 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 mb-16">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12 mb-16">
               {displayedProducts?.map((product, idx) => (
                 <ProductCard
                   key={product.id}
@@ -176,13 +251,20 @@ export default function Home() {
       {/* FULL SCREEN CATALOG MODAL */}
       <Dialog open={isCatalogOpen} onOpenChange={setIsCatalogOpen}>
         <DialogContent className="max-w-none w-screen h-screen m-0 p-0 bg-background border-none rounded-none flex flex-col md:flex-row overflow-hidden">
-          <div className="w-full md:w-64 bg-secondary/20 p-8 border-r border-border overflow-y-auto">
-            <h3 className="font-serif text-2xl mb-8">Каталог</h3>
-            <div className="flex flex-col gap-6">
+          <div className="w-full md:w-64 bg-secondary/20 p-6 md:p-8 border-b md:border-b-0 md:border-r border-border overflow-y-auto">
+            <div className="flex items-center justify-between mb-8 md:block">
+              <h3 className="font-serif text-2xl">Каталог</h3>
+              <div className="md:hidden">
+                <Button variant="ghost" size="sm" onClick={() => setIsCatalogOpen(false)}>
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+            <div className="flex flex-row md:flex-col flex-wrap gap-4 md:gap-6">
               <button
                 onClick={() => handleCategoryChange(null)}
-                className={`text-left text-sm uppercase tracking-widest transition-all ${
-                  activeCategory === null ? "text-primary" : "text-muted-foreground"
+                className={`text-left text-xs md:text-sm uppercase tracking-widest transition-all whitespace-nowrap ${
+                  activeCategory === null ? "text-primary font-medium" : "text-muted-foreground"
                 }`}
               >
                 Все изделия
@@ -191,8 +273,8 @@ export default function Home() {
                 <button
                   key={cat.id}
                   onClick={() => handleCategoryChange(cat.slug)}
-                  className={`text-left text-sm uppercase tracking-widest transition-all ${
-                    activeCategory === cat.slug ? "text-primary" : "text-muted-foreground"
+                  className={`text-left text-xs md:text-sm uppercase tracking-widest transition-all whitespace-nowrap ${
+                    activeCategory === cat.slug ? "text-primary font-medium" : "text-muted-foreground"
                   }`}
                 >
                   {cat.name}
@@ -200,24 +282,30 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="flex-1 p-8 md:p-12 overflow-y-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
-              {filteredProducts?.map((product, idx) => (
-                <ProductCard
-                  key={product.id}
-                  index={idx}
-                  name={product.name}
-                  price={product.price}
-                  image={product.image}
-                  categoryName={categories?.find(c => c.id === product.categoryId)?.name}
-                />
-              ))}
-            </div>
+          <div className="flex-1 p-4 md:p-12 overflow-y-auto relative">
+            {isLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/50 z-10">
+                <TeapotLoader />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12">
+                {filteredProducts?.map((product, idx) => (
+                  <ProductCard
+                    key={product.id}
+                    index={idx}
+                    name={product.name}
+                    price={product.price}
+                    image={product.image}
+                    categoryName={categories?.find(c => c.id === product.categoryId)?.name}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           <Button 
             variant="ghost" 
             size="icon" 
-            className="absolute top-4 right-4 z-50 rounded-full bg-background/50 backdrop-blur-md"
+            className="absolute top-4 right-4 z-50 rounded-full bg-background/50 backdrop-blur-md hidden md:flex"
             onClick={() => setIsCatalogOpen(false)}
           >
             <X className="w-5 h-5" />
