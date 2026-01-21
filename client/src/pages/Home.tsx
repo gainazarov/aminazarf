@@ -5,17 +5,30 @@ import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { useProducts, useProductsByCategory } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   
   // Data Fetching
   const { data: categories } = useCategories();
   const { data: allProducts, isLoading: loadingAll } = useProducts();
   const { data: catProducts, isLoading: loadingCat } = useProductsByCategory(activeCategory);
 
-  const displayedProducts = activeCategory ? catProducts : allProducts;
+  const filteredProducts = activeCategory ? catProducts : allProducts;
+  const totalPages = Math.ceil((filteredProducts?.length || 0) / itemsPerPage);
+  const displayedProducts = filteredProducts?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const isLoading = activeCategory ? loadingCat : loadingAll;
+
+  const handleCategoryChange = (slug: string | null) => {
+    setActiveCategory(slug);
+    setCurrentPage(1);
+  };
 
   // Static images for Hero and Featured sections
   const heroImage = "/images/hero.jpg";
@@ -84,9 +97,9 @@ export default function Home() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-8 mb-16">
+        <div className="flex flex-wrap justify-center items-center gap-8 mb-16">
           <button
-            onClick={() => setActiveCategory(null)}
+            onClick={() => handleCategoryChange(null)}
             className={`text-sm uppercase tracking-widest transition-all duration-300 pb-2 border-b border-transparent ${
               activeCategory === null 
                 ? "text-primary border-primary" 
@@ -98,7 +111,7 @@ export default function Home() {
           {categories?.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setActiveCategory(cat.slug)}
+              onClick={() => handleCategoryChange(cat.slug)}
               className={`text-sm uppercase tracking-widest transition-all duration-300 pb-2 border-b border-transparent ${
                 activeCategory === cat.slug 
                   ? "text-primary border-primary" 
@@ -108,6 +121,13 @@ export default function Home() {
               {cat.name}
             </button>
           ))}
+          <Button 
+            variant="ghost" 
+            onClick={() => setIsCatalogOpen(true)}
+            className="text-sm uppercase tracking-widest ml-4 hover-elevate no-default-hover-elevate"
+          >
+            Посмотреть все
+          </Button>
         </div>
 
         {/* Products Grid */}
@@ -118,20 +138,92 @@ export default function Home() {
             <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce delay-200"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-            {displayedProducts?.map((product, idx) => (
-              <ProductCard
-                key={product.id}
-                index={idx}
-                name={product.name}
-                price={product.price}
-                image={product.image}
-                categoryName={categories?.find(c => c.id === product.categoryId)?.name}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 mb-16">
+              {displayedProducts?.map((product, idx) => (
+                <ProductCard
+                  key={product.id}
+                  index={idx}
+                  name={product.name}
+                  price={product.price}
+                  image={product.image}
+                  categoryName={categories?.find(c => c.id === product.categoryId)?.name}
+                />
+              ))}
+            </div>
+            
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-4">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-full text-xs transition-all ${
+                      currentPage === i + 1 
+                        ? "bg-primary text-primary-foreground" 
+                        : "hover:bg-secondary text-muted-foreground"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </section>
+
+      {/* FULL SCREEN CATALOG MODAL */}
+      <Dialog open={isCatalogOpen} onOpenChange={setIsCatalogOpen}>
+        <DialogContent className="max-w-none w-screen h-screen m-0 p-0 bg-background border-none rounded-none flex flex-col md:flex-row overflow-hidden">
+          <div className="w-full md:w-64 bg-secondary/20 p-8 border-r border-border overflow-y-auto">
+            <h3 className="font-serif text-2xl mb-8">Каталог</h3>
+            <div className="flex flex-col gap-6">
+              <button
+                onClick={() => handleCategoryChange(null)}
+                className={`text-left text-sm uppercase tracking-widest transition-all ${
+                  activeCategory === null ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                Все изделия
+              </button>
+              {categories?.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryChange(cat.slug)}
+                  className={`text-left text-sm uppercase tracking-widest transition-all ${
+                    activeCategory === cat.slug ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 p-8 md:p-12 overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+              {filteredProducts?.map((product, idx) => (
+                <ProductCard
+                  key={product.id}
+                  index={idx}
+                  name={product.name}
+                  price={product.price}
+                  image={product.image}
+                  categoryName={categories?.find(c => c.id === product.categoryId)?.name}
+                />
+              ))}
+            </div>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute top-4 right-4 z-50 rounded-full bg-background/50 backdrop-blur-md"
+            onClick={() => setIsCatalogOpen(false)}
+          >
+            <X className="w-5 h-5" />
+          </Button>
+        </DialogContent>
+      </Dialog>
 
       {/* FEATURED STORY SECTION */}
       <section id="about" className="py-24 bg-card/30">
