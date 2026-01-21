@@ -51,7 +51,7 @@ export default function Home() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-white text-xs md:text-sm uppercase tracking-[0.3em] mb-6 font-medium"
           >
-            Handcrafted Tableware
+            Посуда ручной работы
           </motion.p>
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
@@ -59,7 +59,7 @@ export default function Home() {
             transition={{ delay: 0.7, duration: 0.8 }}
             className="font-serif text-5xl md:text-7xl lg:text-8xl text-white mb-10 leading-tight"
           >
-            The Art of <br/> <span className="italic font-light">Slow Living</span>
+            Искусство <br/> <span className="italic font-light">медленной жизни</span>
           </motion.h1>
           <motion.div
             initial={{ opacity: 0 }}
@@ -70,7 +70,7 @@ export default function Home() {
               href="#shop"
               className="inline-block border border-white/40 text-white px-10 py-4 text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-500 ease-out"
             >
-              Discover Collection
+              Откройте коллекцию
             </a>
           </motion.div>
         </div>
@@ -79,7 +79,7 @@ export default function Home() {
       {/* SHOP SECTION */}
       <section id="shop" className="py-24 md:py-32 container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">Curated Pieces</h2>
+          <h2 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">Избранные изделия</h2>
           <div className="w-12 h-px bg-primary/40 mx-auto" />
         </div>
 
@@ -93,7 +93,7 @@ export default function Home() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            All
+            Все
           </button>
           {categories?.map((cat) => (
             <button
@@ -160,17 +160,17 @@ export default function Home() {
               className="lg:pl-12"
             >
               <h3 className="font-serif text-3xl md:text-5xl mb-8 leading-tight">
-                Beauty in <br/>Imperfection
+                Красота в <br/>Несовершенстве
               </h3>
               <p className="text-muted-foreground leading-loose mb-8 font-light">
-                Our philosophy is rooted in wabi-sabi—finding beauty in the imperfect, impermanent, and incomplete. 
-                Each piece in our collection bears the mark of the human hand, carrying a soul that mass production simply cannot replicate.
+                Наша философия уходит корнями в ваби-саби — поиск красоты в несовершенном, мимолетном и незавершенном. 
+                Каждое изделие в нашей коллекции несет на себе отпечаток руки мастера, обладая душой, которую массовое производство просто не может воспроизвести.
               </p>
               <p className="text-muted-foreground leading-loose mb-10 font-light">
-                We believe the objects we surround ourselves with should bring a sense of calm and grounding to our daily rituals.
+                Мы верим, что предметы, которыми мы себя окружаем, должны привносить чувство спокойствия и заземления в наши ежедневные ритуалы.
               </p>
               <a href="#collections" className="text-primary uppercase tracking-widest text-xs border-b border-primary/50 pb-1 hover:text-foreground hover:border-foreground transition-all">
-                Read Our Story
+                Наша история
               </a>
             </motion.div>
           </div>
@@ -181,33 +181,33 @@ export default function Home() {
       <section className="py-32 container mx-auto px-6">
         <div className="max-w-2xl mx-auto text-center border border-border p-12 md:p-20 relative">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-6">
-            <span className="font-serif text-2xl italic">Gift Giving</span>
+            <span className="font-serif text-2xl italic">Подарки</span>
           </div>
           
           <h3 className="text-xl font-medium tracking-wide mb-6 uppercase text-foreground/80">
-            The Digital Gift Card
+            Цифровая подарочная карта
           </h3>
           <p className="text-muted-foreground mb-10">
-            For the one who loves to host, creating spaces of warmth and gathering.
+            Для тех, кто любит принимать гостей, создавая пространство тепла и встреч.
           </p>
           <button className="bg-foreground text-background px-10 py-4 uppercase tracking-widest text-xs hover:bg-primary transition-colors duration-300">
-            Purchase Gift Card
+            Купить карту
           </button>
         </div>
       </section>
 
       {/* NEWSLETTER */}
       <section className="pb-32 container mx-auto px-6 text-center">
-        <h3 className="font-serif text-3xl mb-4">Join the List</h3>
-        <p className="text-muted-foreground mb-8 text-sm">Sign up for updates on new collections and studio news.</p>
+        <h3 className="font-serif text-3xl mb-4">Присоединяйтесь к нам</h3>
+        <p className="text-muted-foreground mb-8 text-sm">Подпишитесь на новости о новых коллекциях и событиях студии.</p>
         <form className="max-w-md mx-auto flex border-b border-border pb-2" onSubmit={(e) => e.preventDefault()}>
           <input 
             type="email" 
-            placeholder="Enter your email" 
+            placeholder="Введите ваш email" 
             className="flex-1 bg-transparent border-none outline-none placeholder:text-muted-foreground/50 text-center"
           />
           <button className="uppercase text-xs tracking-widest text-foreground hover:text-primary transition-colors">
-            Subscribe
+            Подписаться
           </button>
         </form>
       </section>

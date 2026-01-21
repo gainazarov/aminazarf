@@ -36,16 +36,19 @@ export function Navigation() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-12">
-            {["Shop", "Collections", "About", "Journal"].map((item) => (
-              <a 
-                key={item} 
-                href={`#${item.toLowerCase()}`}
-                className="text-sm uppercase tracking-widest hover:text-primary transition-colors duration-300 relative group"
-              >
-                {item}
-                <span className="absolute -bottom-2 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
-              </a>
-            ))}
+            {["Магазин", "Коллекции", "О нас", "Журнал"].map((item, idx) => {
+              const links = ["shop", "collections", "about", "journal"];
+              return (
+                <a 
+                  key={item} 
+                  href={`#${links[idx]}`}
+                  className="text-sm uppercase tracking-widest hover:text-primary transition-colors duration-300 relative group"
+                >
+                  {item}
+                  <span className="absolute -bottom-2 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+                </a>
+              );
+            })}
           </nav>
 
           <div className="hidden md:flex items-center space-x-6">
@@ -74,16 +77,19 @@ export function Navigation() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-background flex flex-col items-center justify-center space-y-8"
           >
-            {["Shop", "Collections", "About", "Journal"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-3xl font-serif text-foreground hover:text-primary transition-colors"
-              >
-                {item}
-              </a>
-            ))}
+            {["Магазин", "Коллекции", "О нас", "Журнал"].map((item, idx) => {
+              const links = ["shop", "collections", "about", "journal"];
+              return (
+                <a
+                  key={item}
+                  href={`#${links[idx]}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-3xl font-serif text-foreground hover:text-primary transition-colors"
+                >
+                  {item}
+                </a>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
