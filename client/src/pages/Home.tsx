@@ -7,78 +7,30 @@ import { useProducts, useProductsByCategory } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 const TeapotLoader = () => (
-  <div className="flex flex-col items-center justify-center space-y-4">
-    <div className="relative w-24 h-24">
-      <motion.svg
-        viewBox="0 0 100 100"
-        className="w-full h-full text-primary"
-        initial="initial"
-        animate="animate"
+  <div className="flex flex-col items-center justify-center space-y-6">
+    <div className="relative w-32 h-32">
+      <motion.div
+        className="w-full h-full rounded-full overflow-hidden border-2 border-primary/20 p-2"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
       >
-        {/* Teapot body */}
-        <path
-          d="M30 40 Q30 30 50 30 Q70 30 70 40 L75 60 Q75 75 50 75 Q25 75 25 60 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
+        <img 
+          src="/images/loading-plate.jpg" 
+          alt="Plate Loader" 
+          className="w-full h-full object-cover rounded-full"
         />
-        {/* Spout */}
-        <path
-          d="M25 50 L15 45 Q10 42 12 38"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-        {/* Handle */}
-        <path
-          d="M75 45 Q85 45 85 55 Q85 65 75 65"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-        {/* Tea Flow */}
-        <motion.path
-          d="M12 38 Q5 60 50 90"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeDasharray="100"
-          variants={{
-            initial: { strokeDashoffset: 100, opacity: 0 },
-            animate: { 
-              strokeDashoffset: 0, 
-              opacity: [0, 1, 1, 0],
-              transition: { duration: 2, repeat: Infinity, ease: "easeInOut" } 
-            }
-          }}
-        />
-        {/* Piya (Cup) */}
-        <path
-          d="M40 85 L60 85 L65 95 Q50 100 35 95 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-        {/* Tea Circular Path back */}
-        <motion.path
-          d="M50 90 C 100 90, 100 30, 50 30"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeDasharray="150"
-          strokeDashoffset="150"
-          animate={{
-            strokeDashoffset: [150, 0],
-            opacity: [0, 0.5, 0.5, 0],
-            transition: { duration: 2, repeat: Infinity, ease: "linear", delay: 1 }
-          }}
-        />
-      </motion.svg>
+      </motion.div>
+      <motion.div 
+        className="absolute inset-0 rounded-full border-t-2 border-primary"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+      />
     </div>
-    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Загрузка...</span>
+    <span className="text-[10px] uppercase tracking-[0.4em] text-primary font-medium animate-pulse">Загрузка</span>
   </div>
 );
 
@@ -87,6 +39,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(true);
   
   // Data Fetching
   const { data: categories } = useCategories();
@@ -251,44 +204,64 @@ export default function Home() {
       {/* FULL SCREEN CATALOG MODAL */}
       <Dialog open={isCatalogOpen} onOpenChange={setIsCatalogOpen}>
         <DialogContent className="max-w-none w-screen h-screen m-0 p-0 bg-background border-none rounded-none flex flex-col md:flex-row overflow-hidden">
-          <div className="w-full md:w-64 bg-secondary/20 p-6 md:p-8 border-b md:border-b-0 md:border-r border-border overflow-y-auto">
-            <div className="flex items-center justify-between mb-8 md:block">
-              <h3 className="font-serif text-2xl">Каталог</h3>
-              <div className="md:hidden">
-                <Button variant="ghost" size="sm" onClick={() => setIsCatalogOpen(false)}>
+          <div className="w-full md:w-64 bg-secondary/10 p-6 md:p-8 border-b md:border-b-0 md:border-r border-border overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 md:mb-12">
+              <h3 className="font-serif text-2xl tracking-tight">Каталог</h3>
+              <div className="md:hidden flex items-center gap-4">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
+                  className="rounded-full"
+                >
+                  {isCategoryMenuOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => setIsCatalogOpen(false)} className="rounded-full">
                   <X className="w-5 h-5" />
                 </Button>
               </div>
             </div>
-            <div className="flex flex-row md:flex-col flex-wrap gap-4 md:gap-6">
-              <button
-                onClick={() => handleCategoryChange(null)}
-                className={`text-left text-xs md:text-sm uppercase tracking-widest transition-all whitespace-nowrap ${
-                  activeCategory === null ? "text-primary font-medium" : "text-muted-foreground"
-                }`}
-              >
-                Все изделия
-              </button>
-              {categories?.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => handleCategoryChange(cat.slug)}
-                  className={`text-left text-xs md:text-sm uppercase tracking-widest transition-all whitespace-nowrap ${
-                    activeCategory === cat.slug ? "text-primary font-medium" : "text-muted-foreground"
-                  }`}
+            
+            <AnimatePresence>
+              {(isCategoryMenuOpen || window.innerWidth >= 768) && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden md:!h-auto md:!opacity-100"
                 >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
+                  <div className="flex flex-row md:flex-col flex-wrap gap-4 md:gap-8 pb-4">
+                    <button
+                      onClick={() => handleCategoryChange(null)}
+                      className={`text-left text-xs md:text-sm uppercase tracking-[0.2em] transition-all whitespace-nowrap border-b md:border-b-0 pb-1 md:pb-0 ${
+                        activeCategory === null ? "text-primary border-primary font-bold" : "text-muted-foreground border-transparent"
+                      }`}
+                    >
+                      Все изделия
+                    </button>
+                    {categories?.map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => handleCategoryChange(cat.slug)}
+                        className={`text-left text-xs md:text-sm uppercase tracking-[0.2em] transition-all whitespace-nowrap border-b md:border-b-0 pb-1 md:pb-0 ${
+                          activeCategory === cat.slug ? "text-primary border-primary font-bold" : "text-muted-foreground border-transparent"
+                        }`}
+                      >
+                        {cat.name}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <div className="flex-1 p-4 md:p-12 overflow-y-auto relative">
+          <div className="flex-1 p-4 md:p-12 overflow-y-auto relative bg-background">
             {isLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/50 z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                 <TeapotLoader />
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-10 md:gap-y-16">
                 {filteredProducts?.map((product, idx) => (
                   <ProductCard
                     key={product.id}
@@ -305,10 +278,10 @@ export default function Home() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="absolute top-4 right-4 z-50 rounded-full bg-background/50 backdrop-blur-md hidden md:flex"
+            className="absolute top-8 right-8 z-50 rounded-full bg-background/50 backdrop-blur-md hidden md:flex hover:bg-background/80 transition-all"
             onClick={() => setIsCatalogOpen(false)}
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </Button>
         </DialogContent>
       </Dialog>
