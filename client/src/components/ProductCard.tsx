@@ -49,12 +49,12 @@ export function ProductCard({ name, price, image, categoryName, index }: Product
       </motion.div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-[800px] p-0 overflow-hidden bg-background border-none rounded-lg mx-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 max-h-[90vh] overflow-y-auto">
-            <div className="relative aspect-square md:aspect-auto h-64 sm:h-80 md:h-full">
+        <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-[800px] p-0 overflow-hidden bg-background border-none rounded-lg mx-auto">
+          <div className="flex flex-col md:flex-row max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto h-auto md:min-h-[500px]">
               <img src={image} alt={name} className="w-full h-full object-cover" />
             </div>
-            <div className="p-6 md:p-12 flex flex-col justify-center">
+            <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
               <DialogHeader className="mb-6 space-y-2">
                 {categoryName && (
                   <p className="text-[10px] uppercase tracking-[0.3em] text-primary">
