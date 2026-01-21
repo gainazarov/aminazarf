@@ -16,7 +16,7 @@ export function Footer() {
             <ul className="space-y-4 text-sm text-muted-foreground">
               <li><a href="#" className="hover:text-primary transition-colors">Весь магазин</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Новинки</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Журнал</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Контакты</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">О нас</a></li>
             </ul>
           </div>
@@ -25,8 +25,8 @@ export function Footer() {
             <h4 className="uppercase text-xs tracking-[0.2em] mb-6 text-foreground font-semibold">Контакты</h4>
             <ul className="space-y-4 text-sm text-muted-foreground">
               <li><a href="#" className="hover:text-primary transition-colors">Instagram</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Pinterest</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Напишите нам</a></li>
+              <li><a href="https://wa.me/992929698005" className="hover:text-primary transition-colors">WhatsApp</a></li>
+              <li><a href="tel:+992929698005" className="hover:text-primary transition-colors">+992929698005</a></li>
             </ul>
           </div>
         </div>

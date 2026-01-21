@@ -1,11 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ShoppingBag } from "lucide-react";
 
-export function Navigation() {
+type NavigationProps = {
+  onOpenCatalog?: () => void;
+};
+
+export function Navigation({ onOpenCatalog }: NavigationProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleNavClick = (item: string) => (e: MouseEvent<HTMLAnchorElement>) => {
+    if (item !== "Каталог" || !onOpenCatalog) return;
+    e.preventDefault();
+    onOpenCatalog();
+    setMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,12 +47,13 @@ export function Navigation() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-12">
-            {["Магазин", "Коллекции", "О нас", "Журнал"].map((item, idx) => {
+            {["Магазин", "Каталог", "О нас", "Контакты"].map((item, idx) => {
               const links = ["shop", "collections", "about", "journal"];
               return (
                 <a 
                   key={item} 
                   href={`#${links[idx]}`}
+                  onClick={handleNavClick(item)}
                   className="text-sm uppercase tracking-widest hover:text-primary transition-colors duration-300 relative group"
                 >
                   {item}
@@ -77,13 +89,19 @@ export function Navigation() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-background flex flex-col items-center justify-center space-y-8"
           >
-            {["Магазин", "Коллекции", "О нас", "Журнал"].map((item, idx) => {
+            {["Магазин", "Каталог", "О нас", "Контакты"].map((item, idx) => {
               const links = ["shop", "collections", "about", "journal"];
               return (
                 <a
                   key={item}
                   href={`#${links[idx]}`}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    if (item === "Каталог" && onOpenCatalog) {
+                      e.preventDefault();
+                      onOpenCatalog();
+                    }
+                    setMobileMenuOpen(false);
+                  }}
                   className="text-3xl font-serif text-foreground hover:text-primary transition-colors"
                 >
                   {item}

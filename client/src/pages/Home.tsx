@@ -7,7 +7,7 @@ import { useProducts, useProductsByCategory } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 
 const TeapotLoader = () => (
@@ -40,6 +40,7 @@ export default function Home() {
   const itemsPerPage = 8;
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(true);
+  const [newsletterPhone, setNewsletterPhone] = useState("+992");
   
   // Data Fetching
   const { data: categories } = useCategories();
@@ -62,7 +63,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/20">
-      <Navigation />
+      <Navigation onOpenCatalog={() => setIsCatalogOpen(true)} />
 
       {/* HERO SECTION */}
       <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
@@ -173,7 +174,7 @@ export default function Home() {
                   key={product.id}
                   index={idx}
                   name={product.name}
-                  price={product.price}
+                  price={product.price ?? null}
                   image={product.image}
                   categoryName={categories?.find(c => c.id === product.categoryId)?.name}
                 />
@@ -264,7 +265,7 @@ export default function Home() {
                     key={product.id}
                     index={idx}
                     name={product.name}
-                    price={product.price}
+                    price={product.price ?? null}
                     image={product.image}
                     categoryName={categories?.find(c => c.id === product.categoryId)?.name}
                   />
@@ -272,14 +273,6 @@ export default function Home() {
               </div>
             )}
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute top-4 right-4 md:top-8 md:right-8 z-[100] rounded-full bg-background/50 backdrop-blur-md hover:bg-background/80 transition-all"
-            onClick={() => setIsCatalogOpen(false)}
-          >
-            <X className="w-6 h-6" />
-          </Button>
         </DialogContent>
       </Dialog>
 
@@ -314,7 +307,7 @@ export default function Home() {
               </h3>
               <p className="text-muted-foreground leading-loose mb-8 font-light">
                 Наша философия уходит корнями в ваби-саби — поиск красоты в несовершенном, мимолетном и незавершенном. 
-                Каждое изделие в нашей коллекции несет на себе отпечаток руки мастера, обладая душой, которую массовое производство просто не может воспроизвести.
+                Каждое изделие в нашей Каталог несет на себе отпечаток руки мастера, обладая душой, которую массовое производство просто не может воспроизвести.
               </p>
               <p className="text-muted-foreground leading-loose mb-10 font-light">
                 Мы верим, что предметы, которыми мы себя окружаем, должны привносить чувство спокойствия и заземления в наши ежедневные ритуалы.
@@ -327,37 +320,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* GIFT CARD / MINIMAL BLOCK */}
-      <section className="py-32 container mx-auto px-6">
-        <div className="max-w-2xl mx-auto text-center border border-border p-12 md:p-20 relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-6">
-            <span className="font-serif text-2xl italic">Подарки</span>
-          </div>
-          
-          <h3 className="text-xl font-medium tracking-wide mb-6 uppercase text-foreground/80">
-            Цифровая подарочная карта
-          </h3>
-          <p className="text-muted-foreground mb-10">
-            Для тех, кто любит принимать гостей, создавая пространство тепла и встреч.
-          </p>
-          <button className="bg-foreground text-background px-10 py-4 uppercase tracking-widest text-xs hover:bg-primary transition-colors duration-300">
-            Купить карту
-          </button>
-        </div>
-      </section>
-
       {/* NEWSLETTER */}
-      <section className="pb-32 container mx-auto px-6 text-center">
-        <h3 className="font-serif text-3xl mb-4">Присоединяйтесь к нам</h3>
-        <p className="text-muted-foreground mb-8 text-sm">Подпишитесь на новости о новых коллекциях и событиях студии.</p>
+      <section className="py-32 container mx-auto px-6 text-center">
+        <h3 className="font-serif text-3xl mb-4">Оставьте свой контакт</h3>
+        <p className="text-muted-foreground mb-8 text-sm">Оставьте номер телефона, и мы сообщим о новых коллекциях и событиях студии.</p>
         <form className="max-w-md mx-auto flex border-b border-border pb-2" onSubmit={(e) => e.preventDefault()}>
           <input 
-            type="email" 
-            placeholder="Введите ваш email" 
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            value={newsletterPhone}
+            onChange={(e) => {
+              const raw = e.target.value;
+              const digits = raw.replace(/[^0-9+]/g, "");
+              const withPrefix = digits.startsWith("+992") ? digits : `+992${digits.replace(/^\+/, "").replace(/^992/, "")}`;
+              setNewsletterPhone(withPrefix);
+            }}
+            placeholder="Введите номер телефона" 
             className="flex-1 bg-transparent border-none outline-none placeholder:text-muted-foreground/50 text-center"
           />
           <button className="uppercase text-xs tracking-widest text-foreground hover:text-primary transition-colors">
-            Подписаться
+            Оставить контакт
           </button>
         </form>
       </section>
