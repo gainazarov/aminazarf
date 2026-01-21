@@ -216,9 +216,6 @@ export default function Home() {
                 >
                   {isCategoryMenuOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => setIsCatalogOpen(false)} className="rounded-full">
-                  <X className="w-5 h-5" />
-                </Button>
               </div>
             </div>
             
@@ -278,7 +275,7 @@ export default function Home() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="absolute top-8 right-8 z-50 rounded-full bg-background/50 backdrop-blur-md hidden md:flex hover:bg-background/80 transition-all"
+            className="absolute top-4 right-4 md:top-8 md:right-8 z-50 rounded-full bg-background/50 backdrop-blur-md hover:bg-background/80 transition-all"
             onClick={() => setIsCatalogOpen(false)}
           >
             <X className="w-6 h-6" />
