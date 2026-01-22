@@ -5,3 +5,8 @@ server/public
 vite.config.ts.*
 *.tar.gz
 .env
+
+# Vite loads env from the configured project root (`client/`)
+client/.env
+client/.env.*
+client/.env.example

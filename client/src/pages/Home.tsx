@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -9,6 +9,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
 
 const TeapotLoader = () => (
   <div className="flex flex-col items-center justify-center space-y-6">
@@ -41,6 +42,16 @@ export default function Home() {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(true);
   const [newsletterPhone, setNewsletterPhone] = useState("+992");
+
+  useEffect(() => {
+    supabase.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (error) console.error("[supabase] getSession error", error);
+        else console.log("[supabase] getSession ok", data);
+      })
+      .catch((error) => console.error("[supabase] getSession threw", error));
+  }, []);
   
   // Data Fetching
   const { data: categories } = useCategories();
