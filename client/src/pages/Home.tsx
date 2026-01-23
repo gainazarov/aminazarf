@@ -10,28 +10,16 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
 
 const TeapotLoader = () => (
-  <div className="flex flex-col items-center justify-center space-y-6">
-    <div className="relative w-32 h-32">
-      <motion.div
-        className="w-full h-full rounded-full overflow-hidden border-2 border-primary/20 p-2"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-      >
-        <img 
-          src="/images/loading-plate.jpg" 
-          alt="Plate Loader" 
-          className="w-full h-full object-cover rounded-full"
-        />
-      </motion.div>
-      <motion.div 
-        className="absolute inset-0 rounded-full border-t-2 border-primary"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-      />
+  <div className="flex flex-col items-center justify-center space-y-3 py-12">
+    <div className="flex items-center gap-2">
+      <div className="w-2.5 h-2.5 bg-primary rounded-full animate-bounce" />
+      <div className="w-2.5 h-2.5 bg-primary rounded-full animate-bounce delay-150" />
+      <div className="w-2.5 h-2.5 bg-primary rounded-full animate-bounce delay-300" />
     </div>
-    <span className="text-[10px] uppercase tracking-[0.4em] text-primary font-medium animate-pulse">Загрузка</span>
+    <span className="text-[10px] uppercase tracking-[0.4em] text-primary font-medium">Загрузка</span>
   </div>
 );
 
@@ -43,6 +31,9 @@ export default function Home() {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(true);
   const [newsletterPhone, setNewsletterPhone] = useState("+992");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "success" | "error">("idle");
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     supabase.auth
@@ -75,6 +66,36 @@ export default function Home() {
 
   const shopProducts = activeCategory ? shopCat?.items : shopAll?.items;
   const isShopLoading = activeCategory ? loadingShopCat : loadingShopAll;
+
+  // Track which categories actually have products so we can hide empty categories on the main page
+  const [categoriesWithProducts, setCategoriesWithProducts] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    let mounted = true;
+    async function checkCategories() {
+      if (!categories || categories.length === 0) return;
+      const map: Record<number, boolean> = {};
+      await Promise.all(
+        categories.map(async (cat) => {
+          try {
+            const { count } = await supabase
+              .from("products")
+              .select("id", { count: "exact", head: true })
+              .eq("category_id", cat.id);
+            map[cat.id] = (count ?? 0) > 0;
+          } catch {
+            map[cat.id] = true; // on error, keep category visible to avoid hiding content accidentally
+          }
+        }),
+      );
+      if (mounted) setCategoriesWithProducts(map);
+    }
+
+    checkCategories();
+    return () => {
+      mounted = false;
+    };
+  }, [categories]);
 
   const catalogResult = activeCategory ? catalogCat : catalogAll;
   const catalogProducts = catalogResult?.items;
@@ -158,7 +179,7 @@ export default function Home() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 mb-16">
+          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 mb-16">
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
             <button
               onClick={() => handleCategoryChange(null)}
@@ -170,7 +191,7 @@ export default function Home() {
             >
               Все
             </button>
-            {categories?.map((cat) => (
+            {categories?.filter((cat) => categoriesWithProducts[cat.id] !== false).map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => handleCategoryChange(cat.slug)}
@@ -202,19 +223,26 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12 mb-16">
-              {shopProducts?.map((product, idx) => (
-                <ProductCard
-                  key={product.id}
-                  index={idx}
-                  name={product.name}
-                  price={product.price ?? null}
-                  image={product.image}
-                  inStock={product.inStock}
-                  categoryName={categories?.find(c => c.id === product.categoryId)?.name}
-                />
-              ))}
-            </div>
+            {shopProducts && shopProducts.length === 0 ? (
+              <div className="py-20 text-center text-muted-foreground">
+                Товары к этой категории еще не добавлены.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12 mb-16">
+                {shopProducts?.map((product, idx) => (
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    index={idx}
+                    name={product.name}
+                    price={product.price ?? null}
+                    image={product.image}
+                    inStock={product.inStock}
+                    categoryName={categories?.find(c => c.id === product.categoryId)?.name}
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
       </section>
@@ -277,19 +305,26 @@ export default function Home() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-10 md:gap-y-16">
-                  {catalogProducts?.map((product, idx) => (
-                    <ProductCard
-                      key={product.id}
-                      index={idx}
-                      name={product.name}
-                      price={product.price ?? null}
-                      image={product.image}
-                      inStock={product.inStock}
-                      categoryName={categories?.find((c) => c.id === product.categoryId)?.name}
-                    />
-                  ))}
-                </div>
+                {catalogProducts && catalogProducts.length === 0 ? (
+                  <div className="py-20 text-center text-muted-foreground">
+                    Товары к этой категории еще не добавлены.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-10 md:gap-y-16">
+                    {catalogProducts?.map((product, idx) => (
+                      <ProductCard
+                        key={product.id}
+                        id={product.id}
+                        index={idx}
+                        name={product.name}
+                        price={product.price ?? null}
+                        image={product.image}
+                        inStock={product.inStock}
+                        categoryName={categories?.find((c) => c.id === product.categoryId)?.name}
+                      />
+                    ))}
+                  </div>
+                )}
 
                 {catalogTotalPages && catalogTotalPages > 1 ? (
                   <div className="mt-10 flex items-center justify-center gap-3">
@@ -368,7 +403,49 @@ export default function Home() {
       <section className="py-32 container mx-auto px-6 text-center">
         <h3 className="font-serif text-3xl mb-4">Оставьте свой контакт</h3>
         <p className="text-muted-foreground mb-8 text-sm">Оставьте номер телефона, и мы сообщим о новых коллекциях и событиях студии.</p>
-        <form className="max-w-md mx-auto flex border-b border-border pb-2" onSubmit={(e) => e.preventDefault()}>
+        <form
+          className="max-w-md mx-auto flex border-b border-border pb-2"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (newsletterSubmitting) return;
+
+            const phone = newsletterPhone.trim();
+            if (!phone || phone.length < 5) {
+              setNewsletterStatus("error");
+              toast({
+                variant: "destructive",
+                title: "Ошибка",
+                description: "Введите корректный номер телефона.",
+              });
+              return;
+            }
+
+            setNewsletterSubmitting(true);
+            setNewsletterStatus("idle");
+
+            const { error } = await supabase.from("requests").insert({
+              client_phone: phone,
+            });
+
+            if (error) {
+              console.error("[requests] insert error", error);
+              setNewsletterStatus("error");
+              toast({
+                variant: "destructive",
+                title: "Ошибка",
+                description: "Не удалось отправить заявку. Попробуйте позже.",
+              });
+            } else {
+              setNewsletterStatus("success");
+              toast({
+                title: "Заявка отправлена",
+                description: "Мы свяжемся с вами в ближайшее время.",
+              });
+            }
+
+            setNewsletterSubmitting(false);
+          }}
+        >
           <input 
             type="tel"
             inputMode="tel"
@@ -383,10 +460,19 @@ export default function Home() {
             placeholder="Введите номер телефона" 
             className="flex-1 bg-transparent border-none outline-none placeholder:text-muted-foreground/50 text-center"
           />
-          <button className="uppercase text-xs tracking-widest text-foreground hover:text-primary transition-colors">
-            Оставить контакт
+          <button
+            className="uppercase text-xs tracking-widest text-foreground hover:text-primary transition-colors disabled:opacity-60"
+            disabled={newsletterSubmitting}
+          >
+            {newsletterSubmitting ? "Отправка..." : "Оставить контакт"}
           </button>
         </form>
+        {newsletterStatus === "success" ? (
+          <div className="mt-4 text-xs text-primary">Заявка отправлена. Мы свяжемся с вами.</div>
+        ) : null}
+        {newsletterStatus === "error" ? (
+          <div className="mt-4 text-xs text-destructive">Ошибка отправки. Проверьте номер и попробуйте снова.</div>
+        ) : null}
       </section>
 
       <Footer />

@@ -1,21 +1,71 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
+  id: number;
   name: string;
   price: string | null;
-  image: string;
+  image?: string | null;
   categoryName?: string;
   index: number;
   inStock?: boolean;
 }
 
-export function ProductCard({ name, price, image, categoryName, index, inStock }: ProductCardProps) {
+export function ProductCard({ id, name, price, image, categoryName, index, inStock }: ProductCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const { toast } = useToast();
+
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("+992");
+  const [clientMessage, setClientMessage] = useState("");
+  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
+  const [formSubmitting, setFormSubmitting] = useState(false);
+
+  // When modal opens, prefill name/phone from localStorage (if present)
+  useEffect(() => {
+    if (!isOpen) return;
+    try {
+      const savedName = localStorage.getItem("savedRequestName");
+      const savedPhone = localStorage.getItem("savedRequestPhone");
+      if (savedName && clientName === "") setClientName(savedName);
+      // Only override phone if user hasn't changed it from default
+      if (savedPhone && (clientPhone === "" || clientPhone === "+992")) setClientPhone(savedPhone);
+    } catch (e) {
+      // ignore localStorage errors
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!image) {
+      setImgLoaded(true);
+      return;
+    }
+
+    // Check if image is already in browser cache / loaded
+    const pre = new Image();
+    pre.src = image;
+    if (pre.complete) {
+      setImgLoaded(true);
+      return;
+    }
+
+    const onLoad = () => setImgLoaded(true);
+    pre.onload = onLoad;
+    pre.onerror = onLoad; // on error, hide loader so UI isn't stuck
+
+    return () => {
+      pre.onload = null;
+      pre.onerror = null;
+    };
+  }, [image]);
 
   return (
     <>
@@ -29,11 +79,30 @@ export function ProductCard({ name, price, image, categoryName, index, inStock }
       >
         <div className="relative overflow-hidden mb-4 aspect-[3/4] bg-secondary/20">
           <motion.img
-            src={image}
+            ref={imgRef}
+            src={image ?? undefined}
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgLoaded(true)}
+            className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 transition-opacity duration-500 ${
+              imgLoaded ? "opacity-100" : "opacity-0"
+            }`}
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500" />
+
+          {/* Blurred background overlay while image loads (or on slow connections) */}
+          {!imgLoaded ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+              <div
+                className="absolute inset-0 bg-cover bg-center filter blur-xl scale-105"
+                style={{ backgroundImage: image ? `url('${image}')` : undefined }}
+              />
+              <div className="relative z-10 flex flex-col items-center gap-2">
+                <div className="w-8 h-8 border-2 border-primary rounded-full animate-spin border-t-transparent" />
+              </div>
+            </div>
+          ) : (
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500 pointer-events-none" />
+          )}
         </div>
         
         <div className="text-center space-y-1">
@@ -67,7 +136,7 @@ export function ProductCard({ name, price, image, categoryName, index, inStock }
         <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-[800px] p-0 overflow-hidden bg-background border-none rounded-lg mx-auto">
           <div className="flex flex-col md:flex-row max-h-[90vh] overflow-y-auto">
             <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto h-auto md:min-h-[500px]">
-              <img src={image} alt={name} className="w-full h-full object-cover" />
+              <img src={image ?? undefined} alt={name} className="w-full h-full object-cover" />
             </div>
             <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
               <DialogHeader className="mb-6 space-y-2">
@@ -96,14 +165,104 @@ export function ProductCard({ name, price, image, categoryName, index, inStock }
 
               <div className="space-y-6">
                 <h4 className="font-serif text-xl italic">Оставить заявку</h4>
-                <div className="space-y-4">
-                  <Input placeholder="Ваше имя" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors" />
-                  <Input placeholder="Телефон" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors" />
-                  <Textarea placeholder="(Здесь вы можете написать ваш вопрос или ваши пожелания в любом формате)" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 min-h-[80px] resize-none focus-visible:ring-0 focus-visible:border-primary transition-colors" />
-                  <Button className="w-full bg-foreground text-background hover:bg-primary transition-colors duration-500 uppercase tracking-[0.2em] text-[10px] py-6 rounded-none mt-4">
-                    Отправить запрос
+                <form
+                  className="space-y-4"
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (formSubmitting) return;
+
+                    const phone = clientPhone.trim();
+                    if (!phone || phone.length < 5) {
+                      setFormStatus("error");
+                      toast({
+                        variant: "destructive",
+                        title: "Ошибка",
+                        description: "Введите корректный номер телефона.",
+                      });
+                      return;
+                    }
+
+                    setFormSubmitting(true);
+                    setFormStatus("idle");
+
+                    const { error } = await supabase.from("requests").insert({
+                      client_name: clientName || null,
+                      client_phone: phone,
+                      client_message: clientMessage || null,
+                      product_id: id ?? null,
+                      status: "new",
+                      });
+
+                    if (error) {
+                      console.error("[requests] insert error", error);
+                      setFormStatus("error");
+                      toast({
+                        variant: "destructive",
+                        title: "Ошибка",
+                        description: "Не удалось отправить заявку. Попробуйте позже.",
+                      });
+                    } else {
+                      // Save name/phone for next time
+                      try {
+                        if (clientName) localStorage.setItem("savedRequestName", clientName);
+                        if (phone) localStorage.setItem("savedRequestPhone", phone);
+                      } catch (e) {
+                        // ignore localStorage errors
+                      }
+                      setFormStatus("success");
+                      toast({
+                        title: "Заявка отправлена",
+                        description: "Мы свяжемся с вами в ближайшее время.",
+                      });
+                    }
+
+                    setFormSubmitting(false);
+                  }}
+                >
+                  <Input
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    placeholder="Ваше имя"
+                    className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors"
+                  />
+                  <Input
+                    value={clientPhone}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      const digits = raw.replace(/[^0-9+]/g, "");
+                      const withPrefix = digits.startsWith("+992")
+                        ? digits
+                        : `+992${digits.replace(/^\+/, "").replace(/^992/, "")}`;
+                      setClientPhone(withPrefix);
+                    }}
+                    placeholder="Телефон"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors"
+                  />
+                  <Textarea
+                    value={clientMessage}
+                    onChange={(e) => setClientMessage(e.target.value)}
+                    placeholder="(Здесь вы можете написать ваш вопрос или ваши пожелания в любом формате)"
+                    className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 min-h-[80px] resize-none focus-visible:ring-0 focus-visible:border-primary transition-colors"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={formSubmitting}
+                    className="w-full bg-foreground text-background hover:bg-primary transition-colors duration-500 uppercase tracking-[0.2em] text-[10px] py-6 rounded-none mt-4 disabled:opacity-60"
+                  >
+                    {formSubmitting ? "Отправка..." : "Отправить запрос"}
                   </Button>
-                </div>
+                  {formStatus === "success" ? (
+                    <div className="space-y-2">
+                      <div className="text-xs text-primary">Заявка отправлена. Мы свяжемся с вами.</div>
+                      <div className="text-xs text-muted-foreground">Мы запомнили ваши данные — при следующем оформлении они будут автозаполнены, но вы сможете их отредактировать.</div>
+                    </div>
+                  ) : null}
+                  {formStatus === "error" ? (
+                    <div className="text-xs text-destructive">Ошибка отправки. Проверьте номер и попробуйте снова.</div>
+                  ) : null}
+                </form>
               </div>
             </div>
           </div>
