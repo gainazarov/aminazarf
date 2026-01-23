@@ -11,9 +11,10 @@ interface ProductCardProps {
   image: string;
   categoryName?: string;
   index: number;
+  inStock?: boolean;
 }
 
-export function ProductCard({ name, price, image, categoryName, index }: ProductCardProps) {
+export function ProductCard({ name, price, image, categoryName, index, inStock }: ProductCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -45,6 +46,20 @@ export function ProductCard({ name, price, image, categoryName, index }: Product
             {name}
           </h3>
           <p className="text-sm font-sans text-muted-foreground">{price || "Цена по запросу"}</p>
+
+          <div className="pt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-[10px] uppercase tracking-[0.2em] rounded-none"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(true);
+              }}
+            >
+              Купить
+            </Button>
+          </div>
         </div>
       </motion.div>
 
@@ -73,7 +88,9 @@ export function ProductCard({ name, price, image, categoryName, index }: Product
                 </div>
                 <div className="flex justify-between items-baseline border-b border-border pb-4">
                   <span className="text-muted-foreground text-sm uppercase tracking-widest">Наличие</span>
-                  <span className="text-sm">В наличии</span>
+                  <span className="text-sm">
+                    {inStock === false ? "Нет" : "В наличии"}
+                  </span>
                 </div>
               </div>
 
@@ -81,8 +98,8 @@ export function ProductCard({ name, price, image, categoryName, index }: Product
                 <h4 className="font-serif text-xl italic">Оставить заявку</h4>
                 <div className="space-y-4">
                   <Input placeholder="Ваше имя" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors" />
-                  <Input placeholder="Email или Телефон" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors" />
-                  <Textarea placeholder="Ваше сообщение" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 min-h-[80px] resize-none focus-visible:ring-0 focus-visible:border-primary transition-colors" />
+                  <Input placeholder="Телефон" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-colors" />
+                  <Textarea placeholder="(Здесь вы можете написать ваш вопрос или ваши пожелания в любом формате)" className="bg-transparent border-x-0 border-t-0 border-b-border rounded-none px-0 min-h-[80px] resize-none focus-visible:ring-0 focus-visible:border-primary transition-colors" />
                   <Button className="w-full bg-foreground text-background hover:bg-primary transition-colors duration-500 uppercase tracking-[0.2em] text-[10px] py-6 rounded-none mt-4">
                     Отправить запрос
                   </Button>

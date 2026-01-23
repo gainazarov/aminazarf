@@ -11,6 +11,7 @@ export type Product = {
   price?: string | null;
   image: string;
   categoryId?: number | null;
+  inStock?: boolean;
 };
 
 export const categories: Category[] = [
@@ -28,6 +29,7 @@ export const products: Product[] = [
     price: "$45",
     image: "/images/ceramics.jpg",
     categoryId: 1,
+    inStock: true,
   },
   {
     id: 2,
@@ -36,6 +38,7 @@ export const products: Product[] = [
     price: "$38",
     image: "/images/ceramics.jpg",
     categoryId: 1,
+    inStock: true,
   },
   {
     id: 3,
@@ -44,6 +47,7 @@ export const products: Product[] = [
     price: "$60",
     image: "/images/glassware.jpg",
     categoryId: 2,
+    inStock: true,
   },
   {
     id: 4,
@@ -52,6 +56,7 @@ export const products: Product[] = [
     price: "$85",
     image: "/images/ceramics.jpg",
     categoryId: 3,
+    inStock: true,
   },
   {
     id: 5,
@@ -60,6 +65,7 @@ export const products: Product[] = [
     price: "$120",
     image: "/images/decor.jpg",
     categoryId: 4,
+    inStock: true,
   },
 ];
 

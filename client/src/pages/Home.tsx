@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { useProducts, useProductsByCategory } from "@/hooks/use-products";
+import { useProductsPaged, useProductsByCategoryPaged } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -37,8 +37,9 @@ const TeapotLoader = () => (
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const [catalogPage, setCatalogPage] = useState(1);
+  const shopLimit = 8;
+  const catalogPageSize = 20;
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(true);
   const [newsletterPhone, setNewsletterPhone] = useState("+992");
@@ -55,17 +56,39 @@ export default function Home() {
   
   // Data Fetching
   const { data: categories } = useCategories();
-  const { data: allProducts, isLoading: loadingAll } = useProducts();
-  const { data: catProducts, isLoading: loadingCat } = useProductsByCategory(activeCategory);
+  const { data: shopAll, isLoading: loadingShopAll } = useProductsPaged(1, shopLimit);
+  const { data: shopCat, isLoading: loadingShopCat } = useProductsByCategoryPaged(
+    activeCategory,
+    1,
+    shopLimit,
+  );
 
-  const filteredProducts = activeCategory ? catProducts : allProducts;
-  const totalPages = Math.ceil((filteredProducts?.length || 0) / itemsPerPage);
-  const displayedProducts = filteredProducts?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const isLoading = activeCategory ? loadingCat : loadingAll;
+  const { data: catalogAll, isLoading: loadingCatalogAll } = useProductsPaged(
+    catalogPage,
+    catalogPageSize,
+  );
+  const { data: catalogCat, isLoading: loadingCatalogCat } = useProductsByCategoryPaged(
+    activeCategory,
+    catalogPage,
+    catalogPageSize,
+  );
+
+  const shopProducts = activeCategory ? shopCat?.items : shopAll?.items;
+  const isShopLoading = activeCategory ? loadingShopCat : loadingShopAll;
+
+  const catalogResult = activeCategory ? catalogCat : catalogAll;
+  const catalogProducts = catalogResult?.items;
+  const catalogTotalPages = catalogResult?.totalPages;
+  const isCatalogLoading = activeCategory ? loadingCatalogCat : loadingCatalogAll;
+
+  useEffect(() => {
+    if (!catalogTotalPages) return;
+    if (catalogPage > catalogTotalPages) setCatalogPage(catalogTotalPages);
+  }, [catalogPage, catalogTotalPages]);
 
   const handleCategoryChange = (slug: string | null) => {
     setActiveCategory(slug);
-    setCurrentPage(1);
+    setCatalogPage(1);
   };
 
   // Static images for Hero and Featured sections
@@ -171,7 +194,7 @@ export default function Home() {
         </div>
 
         {/* Products Grid */}
-        {isLoading ? (
+        {isShopLoading ? (
           <div className="flex justify-center py-20">
             <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce mr-1"></div>
             <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce mr-1 delay-100"></div>
@@ -180,35 +203,18 @@ export default function Home() {
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-12 mb-16">
-              {displayedProducts?.map((product, idx) => (
+              {shopProducts?.map((product, idx) => (
                 <ProductCard
                   key={product.id}
                   index={idx}
                   name={product.name}
                   price={product.price ?? null}
                   image={product.image}
+                  inStock={product.inStock}
                   categoryName={categories?.find(c => c.id === product.categoryId)?.name}
                 />
               ))}
             </div>
-            
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-4">
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full text-xs transition-all ${
-                      currentPage === i + 1 
-                        ? "bg-primary text-primary-foreground" 
-                        : "hover:bg-secondary text-muted-foreground"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
-            )}
           </>
         )}
       </section>
@@ -265,23 +271,50 @@ export default function Home() {
             </AnimatePresence>
           </div>
           <div className="flex-1 p-4 md:p-12 overflow-y-auto relative bg-background">
-            {isLoading ? (
+            {isCatalogLoading ? (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                 <TeapotLoader />
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-10 md:gap-y-16">
-                {filteredProducts?.map((product, idx) => (
-                  <ProductCard
-                    key={product.id}
-                    index={idx}
-                    name={product.name}
-                    price={product.price ?? null}
-                    image={product.image}
-                    categoryName={categories?.find(c => c.id === product.categoryId)?.name}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-10 md:gap-y-16">
+                  {catalogProducts?.map((product, idx) => (
+                    <ProductCard
+                      key={product.id}
+                      index={idx}
+                      name={product.name}
+                      price={product.price ?? null}
+                      image={product.image}
+                      inStock={product.inStock}
+                      categoryName={categories?.find((c) => c.id === product.categoryId)?.name}
+                    />
+                  ))}
+                </div>
+
+                {catalogTotalPages && catalogTotalPages > 1 ? (
+                  <div className="mt-10 flex items-center justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCatalogPage((p) => Math.max(1, p - 1))}
+                      disabled={isCatalogLoading || catalogPage <= 1}
+                    >
+                      Назад
+                    </Button>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                      Страница {catalogPage} из {catalogTotalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCatalogPage((p) => p + 1)}
+                      disabled={isCatalogLoading || catalogPage >= catalogTotalPages}
+                    >
+                      Вперед
+                    </Button>
+                  </div>
+                ) : null}
+              </>
             )}
           </div>
         </DialogContent>

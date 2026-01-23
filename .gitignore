@@ -10,3 +10,4 @@ vite.config.ts.*
 client/.env
 client/.env.*
 client/.env.example
+supabase/schema.sql
