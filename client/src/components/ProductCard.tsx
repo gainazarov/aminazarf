@@ -133,40 +133,40 @@ export function ProductCard({ id, name, price, image, categoryName, index, inSto
       </motion.div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-[800px] p-0 overflow-hidden bg-background border-none rounded-lg mx-auto">
-          <div className="flex flex-col md:flex-row max-h-[90vh] overflow-y-auto">
-            <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto h-auto md:min-h-[500px]">
+        <DialogContent className="max-w-[calc(100vw-2rem)] lg:max-w-[840px] p-0 overflow-hidden bg-background border-none rounded-lg mx-auto">
+            <div className="flex flex-col md:flex-row max-h-[80vh] md:max-h-[75vh] overflow-y-auto">
+              <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto h-auto md:min-h-[420px]">
               <img src={image ?? undefined} alt={name} className="w-full h-full object-cover" />
             </div>
-            <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
-              <DialogHeader className="mb-6 space-y-2">
+              <div className="w-full md:w-1/2 p-5 sm:p-6 md:p-8 flex flex-col justify-center">
+                <DialogHeader className="mb-5 space-y-2">
                 {categoryName && (
                   <p className="text-[10px] uppercase tracking-[0.3em] text-primary">
                     {categoryName}
                   </p>
                 )}
-                <DialogTitle className="font-serif text-3xl md:text-4xl text-foreground">
+                <DialogTitle className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground">
                   {name}
                 </DialogTitle>
               </DialogHeader>
 
-              <div className="space-y-6 mb-10">
-                <div className="flex justify-between items-baseline border-b border-border pb-4">
-                  <span className="text-muted-foreground text-sm uppercase tracking-widest">Стоимость</span>
-                  <span className="font-serif text-2xl">{price || "Цена по запросу"}</span>
+              <div className="space-y-5 mb-8">
+                <div className="flex justify-between items-baseline border-b border-border pb-3">
+                  <span className="text-muted-foreground text-xs sm:text-sm uppercase tracking-widest">Стоимость</span>
+                  <span className="font-serif text-lg sm:text-xl">{price || "Цена по запросу"}</span>
                 </div>
-                <div className="flex justify-between items-baseline border-b border-border pb-4">
-                  <span className="text-muted-foreground text-sm uppercase tracking-widest">Наличие</span>
-                  <span className="text-sm">
+                <div className="flex justify-between items-baseline border-b border-border pb-3">
+                  <span className="text-muted-foreground text-xs sm:text-sm uppercase tracking-widest">Наличие</span>
+                  <span className="text-xs sm:text-sm">
                     {inStock === false ? "Нет" : "В наличии"}
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <h4 className="font-serif text-xl italic">Оставить заявку</h4>
+              <div className="space-y-5">
+                <h4 className="font-serif text-lg sm:text-xl italic">Оставить заявку</h4>
                 <form
-                  className="space-y-4"
+                  className="space-y-3 sm:space-y-4"
                   onSubmit={async (e) => {
                     e.preventDefault();
                     if (formSubmitting) return;
@@ -229,11 +229,8 @@ export function ProductCard({ id, name, price, image, categoryName, index, inSto
                     value={clientPhone}
                     onChange={(e) => {
                       const raw = e.target.value;
-                      const digits = raw.replace(/[^0-9+]/g, "");
-                      const withPrefix = digits.startsWith("+992")
-                        ? digits
-                        : `+992${digits.replace(/^\+/, "").replace(/^992/, "")}`;
-                      setClientPhone(withPrefix);
+                      const cleaned = raw.replace(/[^0-9+]/g, "");
+                      setClientPhone(cleaned);
                     }}
                     placeholder="Телефон"
                     inputMode="tel"
@@ -249,7 +246,7 @@ export function ProductCard({ id, name, price, image, categoryName, index, inSto
                   <Button
                     type="submit"
                     disabled={formSubmitting}
-                    className="w-full bg-foreground text-background hover:bg-primary transition-colors duration-500 uppercase tracking-[0.2em] text-[10px] py-6 rounded-none mt-4 disabled:opacity-60"
+                    className="w-full bg-foreground text-background hover:bg-primary transition-colors duration-500 uppercase tracking-[0.2em] text-[10px] py-4 sm:py-5 rounded-none mt-3 sm:mt-4 disabled:opacity-60"
                   >
                     {formSubmitting ? "Отправка..." : "Отправить запрос"}
                   </Button>

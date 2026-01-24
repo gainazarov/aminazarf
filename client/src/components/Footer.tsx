@@ -26,7 +26,7 @@ export function Footer() {
             <ul className="space-y-4 text-sm text-muted-foreground">
               <li><a href="#" className="hover:text-primary transition-colors">Instagram</a></li>
               <li><a href="https://wa.me/992929698005" className="hover:text-primary transition-colors">WhatsApp</a></li>
-              <li><a href="tel:+992929698005" className="hover:text-primary transition-colors">+992929698005</a></li>
+              <li><a id="footer-phone" href="tel:+992929698005" className="hover:text-primary transition-colors">+992929698005</a></li>
             </ul>
           </div>
         </div>

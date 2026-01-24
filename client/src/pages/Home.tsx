@@ -404,7 +404,7 @@ export default function Home() {
         <h3 className="font-serif text-3xl mb-4">Оставьте свой контакт</h3>
         <p className="text-muted-foreground mb-8 text-sm">Оставьте номер телефона, и мы сообщим о новых коллекциях и событиях студии.</p>
         <form
-          className="max-w-md mx-auto flex border-b border-border pb-2"
+          className="max-w-md mx-auto flex flex-col md:flex-row md:items-center border-b border-border pb-2"
           onSubmit={async (e) => {
             e.preventDefault();
             if (newsletterSubmitting) return;
@@ -453,15 +453,14 @@ export default function Home() {
             value={newsletterPhone}
             onChange={(e) => {
               const raw = e.target.value;
-              const digits = raw.replace(/[^0-9+]/g, "");
-              const withPrefix = digits.startsWith("+992") ? digits : `+992${digits.replace(/^\+/, "").replace(/^992/, "")}`;
-              setNewsletterPhone(withPrefix);
+              const cleaned = raw.replace(/[^0-9+]/g, "");
+              setNewsletterPhone(cleaned);
             }}
             placeholder="Введите номер телефона" 
-            className="flex-1 bg-transparent border-none outline-none placeholder:text-muted-foreground/50 text-center"
+            className="w-full md:flex-1 bg-white/80 text-foreground border border-border/60 rounded-md px-4 py-3 outline-none placeholder:text-muted-foreground/60 text-center shadow-sm lg:bg-transparent lg:border-none lg:rounded-none lg:px-0 lg:py-0 lg:shadow-none"
           />
           <button
-            className="uppercase text-xs tracking-widest text-foreground hover:text-primary transition-colors disabled:opacity-60"
+            className="mt-3 md:mt-0 md:ml-4 w-full md:w-auto uppercase text-xs tracking-widest bg-foreground text-background border border-foreground rounded-md px-6 py-3 hover:bg-foreground/90 transition-colors disabled:opacity-60 lg:bg-transparent lg:text-foreground lg:border-none lg:px-0 lg:py-0"
             disabled={newsletterSubmitting}
           >
             {newsletterSubmitting ? "Отправка..." : "Оставить контакт"}
