@@ -1753,7 +1753,7 @@ export default function Admin() {
 
             {/* Request details modal (opened when clicking a request row) */}
             <Dialog open={requestDialogOpen} onOpenChange={(v) => { if(!v) { setRequestDialogOpen(false); setRequestEditing(null); } else setRequestDialogOpen(v); }}>
-              <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-3xl">
+              <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-3xl h-[90dvh] sm:h-auto max-h-[90dvh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Детали заявки</DialogTitle>
                 </DialogHeader>
@@ -1876,7 +1876,7 @@ export default function Admin() {
 
       {/* Category dialog */}
       <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg h-[90dvh] sm:h-auto max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {categoryEditing ? "Редактировать категорию" : "Новая категория"}
@@ -1936,7 +1936,7 @@ export default function Admin() {
 
       {/* Product dialog */}
       <Dialog open={productDialogOpen} onOpenChange={setProductDialogOpen}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-xl">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-xl h-[90dvh] sm:h-auto max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {productEditing ? "Редактировать товар" : "Новый товар"}
