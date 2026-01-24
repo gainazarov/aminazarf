@@ -249,7 +249,7 @@ export default function Home() {
 
       {/* FULL SCREEN CATALOG MODAL */}
       <Dialog open={isCatalogOpen} onOpenChange={setIsCatalogOpen}>
-        <DialogContent className="max-w-none w-screen h-screen m-0 p-0 bg-background border-none rounded-none flex flex-col md:flex-row overflow-hidden">
+        <DialogContent className="max-w-none w-[100dvw] h-[100dvh] left-0 top-0 translate-x-0 translate-y-0 m-0 p-0 bg-background border-none rounded-none flex flex-col md:flex-row overflow-hidden">
           <div className="w-full md:w-64 bg-secondary/10 p-6 md:p-8 border-b md:border-b-0 md:border-r border-border overflow-y-auto">
             <div className="flex items-center justify-between mb-4 md:mb-12">
               <h3 className="font-serif text-2xl tracking-tight">Каталог</h3>
