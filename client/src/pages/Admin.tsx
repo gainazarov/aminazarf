@@ -1000,7 +1000,7 @@ export default function Admin() {
         <div className="mt-10">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <TabsList className="w-full sm:w-auto">
+              <TabsList className="w-full sm:w-auto overflow-x-auto justify-start sm:justify-center flex-nowrap gap-1">
                 <TabsTrigger value="categories" className="flex-1 sm:flex-none">
                   Категории
                 </TabsTrigger>
@@ -1015,11 +1015,12 @@ export default function Admin() {
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   onClick={handleRefresh}
                   disabled={isBusy}
+                  className="w-full sm:w-auto"
                 >
                   {isBusy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -1031,14 +1032,14 @@ export default function Admin() {
             </div>
 
             <TabsContent value="categories">
-              <div className="mt-6 flex items-center justify-between gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h2 className="font-serif text-2xl">Категории</h2>
                   <p className="text-sm text-muted-foreground">
                     Название и slug используются для фильтрации на витрине.
                   </p>
                 </div>
-                <Button onClick={openCreateCategory} className="gap-2">
+                <Button onClick={openCreateCategory} className="gap-2 w-full sm:w-auto">
                   <Plus className="h-4 w-4" />
                   Добавить
                 </Button>
@@ -1060,7 +1061,8 @@ export default function Admin() {
                   </div>
                 ) : (
                   <>
-                    <Table>
+                    <div className="w-full overflow-x-auto">
+                      <Table className="min-w-[560px]">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Название</TableHead>
@@ -1154,19 +1156,21 @@ export default function Admin() {
                           </TableRow>
                         ))}
                       </TableBody>
-                    </Table>
+                      </Table>
+                    </div>
 
                     {categoriesTotalPages > 1 ? (
-                      <div className="flex items-center justify-between gap-3 p-4 border-t border-border">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-t border-border">
                         <span className="text-xs text-muted-foreground">
                           Страница {categoriesPage} из {categoriesTotalPages}
                         </span>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setCategoriesPage((p) => Math.max(1, p - 1))}
                             disabled={categoriesPage <= 1}
+                            className="w-full sm:w-auto"
                           >
                             Назад
                           </Button>
@@ -1177,6 +1181,7 @@ export default function Admin() {
                               setCategoriesPage((p) => Math.min(categoriesTotalPages, p + 1))
                             }
                             disabled={categoriesPage >= categoriesTotalPages}
+                            className="w-full sm:w-auto"
                           >
                             Вперед
                           </Button>
@@ -1189,15 +1194,15 @@ export default function Admin() {
             </TabsContent>
 
             <TabsContent value="products">
-              <div className="mt-6 flex items-start justify-between gap-4">
+              <div className="mt-6 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 <div>
                   <h2 className="font-serif text-2xl">Товары</h2>
                   <p className="text-sm text-muted-foreground">
                     Управляйте карточками: категория, наличие, цена и фото.
                   </p>
                 </div>
-                <div className="flex flex-col items-end gap-3">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col items-start lg:items-end gap-3 w-full lg:w-auto">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full">
                     <Select
                       value={filterCategory ?? "all"}
                       onValueChange={(v) => {
@@ -1205,7 +1210,7 @@ export default function Admin() {
                         setProductsPage(1);
                       }}
                     >
-                      <SelectTrigger className="min-w-[160px]">
+                      <SelectTrigger className="w-full sm:min-w-[160px]">
                         <SelectValue placeholder="Все категории" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1225,12 +1230,13 @@ export default function Admin() {
                         setFilterCategory(null);
                         setProductsPage(1);
                       }}
+                      className="w-full sm:w-auto"
                     >
                       Сбросить
                     </Button>
                   </div>
 
-                  <Button onClick={openCreateProduct} className="gap-2">
+                  <Button onClick={openCreateProduct} className="gap-2 w-full sm:w-auto">
                     <Plus className="h-4 w-4" />
                     Добавить
                   </Button>
@@ -1254,7 +1260,8 @@ export default function Admin() {
                 ) : (
                   <>
                     {/* --- Stats: will be rendered below for the "stats" tab --- */}
-                    <Table>
+                    <div className="w-full overflow-x-auto">
+                      <Table className="min-w-[860px]">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Товар</TableHead>
@@ -1383,19 +1390,21 @@ export default function Admin() {
                           </TableRow>
                         ))}
                       </TableBody>
-                    </Table>
+                      </Table>
+                    </div>
 
                     {productsTotalPages && productsTotalPages > 1 ? (
-                      <div className="flex items-center justify-between gap-3 p-4 border-t border-border">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-t border-border">
                         <span className="text-xs text-muted-foreground">
                           Страница {productsPage} из {productsTotalPages}
                         </span>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setProductsPage((p) => Math.max(1, p - 1))}
                             disabled={productsQuery.isFetching || productsPage <= 1}
+                            className="w-full sm:w-auto"
                           >
                             Назад
                           </Button>
@@ -1404,6 +1413,7 @@ export default function Admin() {
                             size="sm"
                             onClick={() => setProductsPage((p) => p + 1)}
                             disabled={productsQuery.isFetching || productsPage >= productsTotalPages}
+                            className="w-full sm:w-auto"
                           >
                             Вперед
                           </Button>
@@ -1416,12 +1426,12 @@ export default function Admin() {
             </TabsContent>
 
             <TabsContent value="requests">
-              <div className="mt-6 flex items-center justify-between gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h2 className="font-serif text-2xl">Заявки</h2>
                   <p className="text-sm text-muted-foreground">Список входящих заявок. Новые — сверху.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="sm"
@@ -1429,6 +1439,7 @@ export default function Admin() {
                       setRequestsSort((s) => (s === "desc" ? "asc" : "desc"));
                       setRequestsPage(1);
                     }}
+                    className="w-full sm:w-auto"
                   >
                     Сортировать: {requestsSort === "desc" ? "Новые сверху" : "Старые сверху"}
                   </Button>
@@ -1449,7 +1460,8 @@ export default function Admin() {
                   <div className="p-6 text-sm text-muted-foreground">Не удалось загрузить заявки.</div>
                 ) : (
                   <>
-                    <Table>
+                    <div className="w-full overflow-x-auto">
+                      <Table className="min-w-[980px]">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Клиент</TableHead>
@@ -1521,17 +1533,19 @@ export default function Admin() {
                           );
                         })}
                       </TableBody>
-                    </Table>
+                        </Table>
+                      </div>
 
                     {requestsTotalPages && requestsTotalPages > 1 ? (
-                      <div className="flex items-center justify-between gap-3 p-4 border-t border-border">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-t border-border">
                         <span className="text-xs text-muted-foreground">Страница {requestsPage} из {requestsTotalPages}</span>
-                        <div className="flex gap-2">
+                          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setRequestsPage((p) => Math.max(1, p - 1))}
                             disabled={requestsQuery.isFetching || requestsPage <= 1}
+                              className="w-full sm:w-auto"
                           >
                             Назад
                           </Button>
@@ -1540,6 +1554,7 @@ export default function Admin() {
                             size="sm"
                             onClick={() => setRequestsPage((p) => Math.min(requestsTotalPages ?? p + 1, p + 1))}
                             disabled={requestsQuery.isFetching || requestsPage >= (requestsTotalPages ?? Infinity)}
+                              className="w-full sm:w-auto"
                           >
                             Вперед
                           </Button>
@@ -1553,12 +1568,12 @@ export default function Admin() {
 
             <TabsContent value="stats">
               <div className="mt-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
                     <h2 className="font-serif text-2xl">Статистика</h2>
                     <p className="text-sm text-muted-foreground">Общая статистика по товарам и по категориям.</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <Button
                       variant="outline"
                       size="sm"
@@ -1567,6 +1582,7 @@ export default function Admin() {
                         setStatsData(null);
                         setActiveTab("stats");
                       }}
+                      className="w-full sm:w-auto"
                     >
                       Пересчитать
                     </Button>
@@ -1620,15 +1636,15 @@ export default function Admin() {
                   transition={{ duration: 0.4 }}
                   className="mt-6 border border-border rounded-lg bg-card/30 p-6"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <h3 className="font-semibold">Заявки</h3>
                       <p className="text-sm text-muted-foreground">Статистика по входящим заявкам.</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
                       <input
                         type="month"
-                        className="rounded-md border border-input px-2 py-1 text-sm"
+                        className="rounded-md border border-input px-2 py-1 text-sm w-full sm:w-auto"
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
                       />
@@ -1637,6 +1653,7 @@ export default function Admin() {
                         size="sm"
                         onClick={() => loadRequestsStatsMonth(selectedMonth)}
                         disabled={requestsStatsMonthLoading}
+                        className="w-full sm:w-auto"
                       >
                         {requestsStatsMonthLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Показать"}
                       </Button>
@@ -1649,6 +1666,7 @@ export default function Admin() {
                           setSelectedMonth(val);
                           loadRequestsStatsMonth(val);
                         }}
+                        className="w-full sm:w-auto"
                       >
                         Сбросить
                       </Button>
