@@ -460,7 +460,7 @@ export default function Home() {
             className="w-full md:flex-1 bg-white/80 text-foreground border border-border/60 rounded-md px-4 py-3 outline-none placeholder:text-muted-foreground/60 text-center shadow-sm lg:bg-transparent lg:border-none lg:rounded-none lg:px-0 lg:py-0 lg:shadow-none"
           />
           <button
-            className="mt-3 md:mt-0 md:ml-4 w-full md:w-auto uppercase text-xs tracking-widest bg-foreground text-background border border-foreground rounded-md px-6 py-3 hover:bg-foreground/90 transition-colors disabled:opacity-60 lg:bg-transparent lg:text-foreground lg:border-none lg:px-0 lg:py-0"
+            className="mt-3 md:mt-0 md:ml-4 w-full md:w-auto uppercase text-xs tracking-widest bg-foreground text-background border border-foreground px-6 py-3 hover:bg-foreground/90 transition-colors disabled:opacity-60"
             disabled={newsletterSubmitting}
           >
             {newsletterSubmitting ? "Отправка..." : "Оставить контакт"}

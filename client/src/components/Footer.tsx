@@ -1,4 +1,6 @@
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="bg-secondary/30 pt-24 pb-12">
       <div className="container mx-auto px-6">
@@ -32,8 +34,27 @@ export function Footer() {
         </div>
 
         <div className="border-t border-primary/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground/60 uppercase tracking-wider">
-          <p>&copy; 2024 Amina Zarf. Все права защищены.</p>
-          <p className="mt-4 md:mt-0 font-medium">Designed with brain. Built with heart. — Gainazarov • ZIYO</p>
+          <p>&copy; {year} Amina Zarf. Все права защищены.</p>
+          <p className="mt-4 md:mt-0 font-medium border-b border-primary/20 pb-1">
+            Designed with brain. Built with heart. —{" "}
+            <a
+              href="https://gainazarov.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              Gainazarov
+            </a>{" "}
+            •{" "}
+            <a
+              href="https://ziyo.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              ZIYO
+            </a>
+          </p>
         </div>
       </div>
     </footer>
