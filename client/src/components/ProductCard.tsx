@@ -134,18 +134,18 @@ export function ProductCard({ id, name, price, image, categoryName, index, inSto
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-[calc(100vw-2rem)] lg:max-w-[840px] p-0 overflow-hidden bg-background border-none rounded-lg mx-auto">
-            <div className="flex flex-col md:flex-row max-h-[80vh] md:max-h-[75vh] overflow-y-auto">
-              <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto h-auto md:min-h-[420px]">
+            <div className="flex flex-col md:flex-row max-h-[80vh] md:h-[75vh] overflow-y-auto md:overflow-y-hidden">
+              <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto h-auto md:h-full">
               <img src={image ?? undefined} alt={name} className="w-full h-full object-cover" />
             </div>
-              <div className="w-full md:w-1/2 p-5 sm:p-6 md:p-8 flex flex-col justify-center">
+              <div className="w-full md:w-1/2 p-5 sm:p-6 md:p-8 flex flex-col justify-center md:justify-start md:h-full md:overflow-y-auto">
                 <DialogHeader className="mb-5 space-y-2">
                 {categoryName && (
                   <p className="text-[10px] uppercase tracking-[0.3em] text-primary">
                     {categoryName}
                   </p>
                 )}
-                <DialogTitle className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground">
+                <DialogTitle className="font-serif text-xl sm:text-2xl md:text-3xl text-foreground">
                   {name}
                 </DialogTitle>
               </DialogHeader>
